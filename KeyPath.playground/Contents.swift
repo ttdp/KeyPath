@@ -1,26 +1,63 @@
 import Foundation
 
-struct Person {
-    let name: String
+class Hotel {
+    var brand: String
+    var star: Int
     
-    func sayHi() {
-        print("Hi, \(name)!")
+    init(brand: String, star: Int) {
+        self.brand = brand
+        self.star = star
     }
 }
 
-let buddy = Person(name: "Matt")
-buddy.sayHi()
-print(buddy[keyPath: \Person.name])
+let hotel = Hotel(brand: "Sheraton", star: 5)
+print(hotel.brand, hotel.star)   // Sheraton 5
+hotel[keyPath: \Hotel.brand] = "Marriott"
+hotel[keyPath: \Hotel.star] = 4
+print(hotel.brand, hotel.star)   // Marriott 4
 
-struct Coffee {
+struct Hobby {
     var type: String
     
-    func taste() {
+    func play() {
         print("Enjoy \(type)!")
     }
 }
 
-var coffee = Coffee(type: "Mocha")
-coffee.taste()
-coffee[keyPath: \Coffee.type] = "Latte"
-coffee.taste()
+var hobby = Hobby(type: "Basketball")
+let typeKeyPath = \Hobby.type
+hobby.play()  // Enjoy Basketball!
+hobby[keyPath: typeKeyPath] = "Swimming"
+hobby.play()  // Enjoy Swimming!
+
+struct Person {
+    let name: String
+    let hobby: Hobby
+}
+
+let person = Person(name: "John", hobby: hobby)
+let nameKeyPath = \Person.name
+let hobbyKeyPath = \Person.hobby
+print(person[keyPath: nameKeyPath])     // John
+print(person[keyPath: hobbyKeyPath])    // Hobby(type: "Swimming")
+
+let chainedKeyPath = \Person.hobby.type
+let appendedKeyPath = hobbyKeyPath.appending(path: typeKeyPath)
+print(person[keyPath: chainedKeyPath])  // Swimming
+print(person[keyPath: appendedKeyPath]) // Swimming
+
+let marriott = Hotel(brand: "Marriott", star: 4)
+let sheraton = Hotel(brand: "Sheraton", star: 5)
+let holidayInn = Hotel(brand: "HolidayInn", star: 3)
+
+let hotes = [marriott, sheraton, holidayInn]
+print(hotes)
+
+struct Task {
+    let title: String
+    let isDone: Bool
+}
+
+let tasks = [Task(title: "First", isDone: true), Task(title: "Second", isDone: false)]
+let finishedTasks = tasks.filter(\.isDone)
+print(finishedTasks)
