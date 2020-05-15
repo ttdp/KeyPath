@@ -51,13 +51,24 @@ let sheraton = Hotel(brand: "Sheraton", star: 5)
 let holidayInn = Hotel(brand: "HolidayInn", star: 3)
 
 let hotes = [marriott, sheraton, holidayInn]
-print(hotes)
+print(hotes[keyPath: \[Hotel].[1].brand])   // Sheraton
 
-struct Task {
-    let title: String
-    let isDone: Bool
+extension Sequence {
+    func sorted<T: Comparable>(on keyPath: KeyPath<Element, T>, by order: (T, T) -> Bool) -> [Element] {
+        return sorted { current, next in
+            order(current[keyPath: keyPath], next[keyPath: keyPath])
+        }
+    }
 }
 
-let tasks = [Task(title: "First", isDone: true), Task(title: "Second", isDone: false)]
-let finishedTasks = tasks.filter(\.isDone)
-print(finishedTasks)
+print(hotes.sorted(on: \Hotel.star, by: <).map { $0.brand })
+// ["HolidayInn", "Marriott", "Sheraton"]
+
+extension Sequence {
+    func map<T>(_ keyPath: KeyPath<Element, T>) -> [T] {
+        return map { $0[keyPath: keyPath] }
+    }
+}
+
+print(hotes.sorted(on: \.star, by: >).map(\.brand))
+// ["Sheraton", "Marriott", "HolidayInn"]
